@@ -1,16 +1,31 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete, HttpCode} from '@nestjs/common';
+import {Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UsePipes, ValidationPipe} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import {RefreshTokenDto} from "./dto/refresh-token.dto";
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @UsePipes(new ValidationPipe())
   @HttpCode(200)
 
   @Post('register')
-  async register(){
-    return this.authService.register();
+  async register(@Body() dto: CreateAuthDto){
+    return this.authService.register(dto);
+  } @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+
+  @Post('login')
+  async login(@Body() dto: CreateAuthDto){
+    return this.authService.login(dto);
+  } @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+
+  @Post('login/acces-token')
+  async getNewToken(@Body() dto: RefreshTokenDto){
+    return this.authService.getNewToken(dto);
   }
 
   @Post()
